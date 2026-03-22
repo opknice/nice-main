@@ -78,17 +78,16 @@ void ListenFromOpenKore() {
 
 // --- Step 2 & 3: รับคำสั่งจาก OpenKore แล้วส่งเข้า Game Engine ---
 void __cdecl OpenKoreListener(void* p) {
-    char recvBuf[4096];
+    char recvBuf[2048];
     while (true) {
         if (bridgeSocket != INVALID_SOCKET) {
             int bytes = recv(bridgeSocket, recvBuf, sizeof(recvBuf), 0);
             if (bytes > 0 && g_session_ptr != nullptr) {
-                // Step 3: สั่งให้ Game Client เป็นคนส่ง (Gepard จะ Encrypt ให้เอง)
-                // เราเรียกใช้ฟังก์ชันภายในเกมตรงๆ เพื่อความเนียน
+                // Step 3: Inject Packet กลับเข้า Game Engine
                 GameSendPacket(g_session_ptr, bytes, recvBuf);
             }
         }
-        Sleep(10); // ป้องกัน CPU Overload
+        Sleep(10);
     }
 }
 
